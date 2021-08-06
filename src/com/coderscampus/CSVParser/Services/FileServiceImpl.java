@@ -28,8 +28,8 @@ public class FileServiceImpl implements FileService {
 
     }
 
-
-    private void readDataFromFile(Map.Entry<String,File> file){
+    @Override
+    public void readDataFromFile(Map.Entry<String, File> file){
         // It uses try-with-resources where the resource "BufferedReader" is automatically closed once finished (normally or abruptly),
         // hence no need for finally block.
         try (BufferedReader br = new BufferedReader(new FileReader(file.getValue()))) {

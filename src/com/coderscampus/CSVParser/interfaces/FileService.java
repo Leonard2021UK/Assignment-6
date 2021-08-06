@@ -6,8 +6,6 @@ import java.util.Map;
 public interface FileService {
     void fileRead(Map<String, File> filePaths);
 
-    private void readDataFromFile(Map.Entry<String,String> file) {
-
-    }
+    void readDataFromFile(Map.Entry<String,File> file);
 
 }
