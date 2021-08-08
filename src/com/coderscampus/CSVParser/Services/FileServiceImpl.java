@@ -1,64 +1,75 @@
 package com.coderscampus.CSVParser.Services;
 
+import com.coderscampus.CSVParser.interfaces.ConversionService;
 import com.coderscampus.CSVParser.interfaces.FileService;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+
 
 public class FileServiceImpl implements FileService {
 
     // holds data read from the file
-    private final Map<String,Map<String,String>> salesDataSet = new TreeMap<>();
+    private final Map<String, Map<LocalDate,Integer>> salesDataSet = new HashMap<>();
+
+    // provides conversion functionalities
+    private final ConversionService conversionService;
+    
+    public FileServiceImpl(ConversionService conversionService){
+        this.conversionService = conversionService;
+    }
 
     /**
-     * Reads file into an ArrayList
+     * Iterates through all the files provided for parsing
      */
     @Override
     public void fileRead(Map<String,File> filePaths){
 
-
         for (Map.Entry<String,File> entry: filePaths.entrySet()){
-            readDataFromFile(entry);
+
+            // clear Deque
+            this.conversionService.resetReverseData();
+
+            readAndStoreDataInReverse(entry);
+
+            // stores the whole dataset read from the file in a map data structure
+            String reportName = entry.getKey();
+            this.salesDataSet.put(reportName,this.conversionService.convertData());
         }
-
-        System.out.println(getSalesDataSetByName("modelSFile").toString());
-
     }
 
     @Override
-    public void readDataFromFile(Map.Entry<String, File> file){
+    public Map<String, Map<LocalDate, Integer>> getSalesDataSet() {
+        return salesDataSet;
+    }
+
+    /**
+     * Reads and stores the data into Deque to maintain LIFO
+     * @param file - file to read
+     */
+    @Override
+    public void readAndStoreDataInReverse(Map.Entry<String, File> file){
+
         // It uses try-with-resources where the resource "BufferedReader" is automatically closed once finished (normally or abruptly),
         // hence no need for finally block.
         try (BufferedReader br = new BufferedReader(new FileReader(file.getValue()))) {
+
+            // holds data read from the file
             String csvData;
-            Map<String,String> parsedData = new TreeMap<>();
 
+            // iterate through the file
             while ((csvData = br.readLine()) != null){
-                System.out.println(csvData);
-                String[] salesData = csvData.split(",");
-                String date = salesData[0];
-                String sale = salesData[1];
-                parsedData.put(date,sale);
+                this.conversionService.setReverseData(csvData);
             }
-
-            this.salesDataSet.put(file.getKey(),parsedData);
 
         } catch (Exception e) {
             System.out.println("Something went wrong!");
             System.out.println(e.getMessage());
         }
     }
-
-    public Map<String, Map<String, String>> getSalesDataSet() {
-        return salesDataSet;
-    }
-
-    public Map<String, String> getSalesDataSetByName(String name) {
-        return salesDataSet.get(name);
-    }
-
 }
 

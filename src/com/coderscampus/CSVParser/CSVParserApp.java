@@ -1,29 +1,24 @@
 package com.coderscampus.CSVParser;
 
+import com.coderscampus.CSVParser.Services.AppServiceImpl;
+import com.coderscampus.CSVParser.Services.ConversionServiceImpl;
 import com.coderscampus.CSVParser.Services.FileServiceImpl;
+import com.coderscampus.CSVParser.interfaces.ConversionService;
 import com.coderscampus.CSVParser.interfaces.FileService;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 public class CSVParserApp {
+
     public static void main(String[] args) {
 
-        FileService fs = new FileServiceImpl();
+        ConversionService dtcs = new ConversionServiceImpl();
 
-        // Store file path
-        File model3File = new File("data/model3.csv");
-        File modelSFile = new File("data/modelS.csv");
-        File modelXFile = new File("data/modelX.csv");
+        FileService fs = new FileServiceImpl(dtcs);
 
-        Map<String,File> files = new HashMap<>();
+        AppServiceImpl app = new AppServiceImpl(fs);
 
-        files.put("model3File",new File("data/model3.csv"));
-        files.put("modelSFile",new File("data/modelS.csv"));
-        files.put("modelXFile",new File("data/modelX.csv"));
+        app.prepareReport();
 
-        fs.fileRead(files);
+        app.showReport();
 
     }
 }
