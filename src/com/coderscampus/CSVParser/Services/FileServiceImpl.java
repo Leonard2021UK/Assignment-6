@@ -27,7 +27,7 @@ public class FileServiceImpl implements FileService {
      * Iterates through all the files provided for parsing
      */
     @Override
-    public void fileRead(Map<String,File> filePaths){
+    public void readFile(Map<String,File> filePaths){
 
         for (Map.Entry<String,File> entry: filePaths.entrySet()){
 

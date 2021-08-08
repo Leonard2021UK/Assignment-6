@@ -27,7 +27,7 @@ public class AppServiceImpl {
         files.put("Model S",new File("data/modelS.csv"));
         files.put("Model X",new File("data/modelX.csv"));
 
-        this.fileService.fileRead(files);
+        this.fileService.readFile(files);
     }
 
     public void showReport(){

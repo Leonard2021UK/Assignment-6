@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface FileService {
 
-    void fileRead(Map<String, File> filePaths);
+    void readFile(Map<String, File> filePaths);
 
     void readAndStoreDataInReverse(Map.Entry<String, File> file);
 

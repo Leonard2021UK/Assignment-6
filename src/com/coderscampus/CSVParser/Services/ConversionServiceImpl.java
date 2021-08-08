@@ -5,14 +5,19 @@ import com.coderscampus.CSVParser.interfaces.ConversionService;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 public class ConversionServiceImpl implements ConversionService {
 
-    // we are processing the data backwards from 2019
+    // the data is processed backwards from 2019
     // this is the starting point in all three reports
-    private final LocalDate initialYear;
+    private final LocalDate initialDate;
 
     // this holds the previous sales date
     private LocalDate previousLocalDate;
@@ -24,12 +29,12 @@ public class ConversionServiceImpl implements ConversionService {
     // ref.:https://www.baeldung.com/java-check-string-number
     private final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
-    public ConversionServiceImpl(){
-        this.initialYear = LocalDate.of(2019,12,31);
+    public ConversionServiceImpl(Integer latestYearInReport){
+        this.initialDate = LocalDate.of(latestYearInReport,12,31);
         this.reverseData = new ArrayDeque<>();
     }
 
-    // adds item in to a Deque datastructures thuse maintaining LIFO
+    // adds item in to a Deque datastructures thus maintaining LIFO
     public void setReverseData(String data){
         this.reverseData.push(data);
     }
@@ -40,7 +45,7 @@ public class ConversionServiceImpl implements ConversionService {
     }
 
     public void initializePreviousLocalDate (){
-        this.previousLocalDate = initialYear;
+        this.previousLocalDate = initialDate;
     }
 
     // sets the next year (backwards)
