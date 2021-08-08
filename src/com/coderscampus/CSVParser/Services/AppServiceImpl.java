@@ -5,11 +5,7 @@ import com.coderscampus.CSVParser.interfaces.FileService;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.HashMap;
-import java.util.IntSummaryStatistics;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AppServiceImpl {
@@ -47,6 +43,7 @@ public class AppServiceImpl {
                 IntSummaryStatistics summary = salesData.stream().collect(Collectors.summarizingInt(Map.Entry::getValue));
                 System.out.println(year + " -> " + summary.getSum());
             });
+
 
             // gets the date for the best year
             Optional<Map.Entry<LocalDate, Integer>> maxSales = dataset.entrySet().stream().max(Map.Entry.comparingByValue());
