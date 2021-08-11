@@ -45,7 +45,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Map<String, Map<YearMonth, Integer>> getSalesDataSet() {
-        return salesDataSet;
+        return this.salesDataSet;
     }
 
     /**

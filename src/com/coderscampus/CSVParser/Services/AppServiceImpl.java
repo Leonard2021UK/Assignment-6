@@ -33,7 +33,7 @@ public class AppServiceImpl {
             System.out.println("---------------------------");
 
             // groups data by year
-            Map<Integer, List<Map.Entry<LocalDate, Integer>>> groupedDataSet = dataset
+            Map<Integer, List<Map.Entry<YearMonth, Integer>>> groupedDataSet = dataset
                     .entrySet()
                     .stream()
                     .collect(Collectors.groupingBy(data -> data.getKey().getYear()));
@@ -44,12 +44,11 @@ public class AppServiceImpl {
                 System.out.println(year + " -> " + summary.getSum());
             });
 
+            // gets the date for the best year
+            Optional<Map.Entry<YearMonth, Integer>> maxSales = dataset.entrySet().stream().max(Map.Entry.comparingByValue());
 
             // gets the date for the best year
-            Optional<Map.Entry<LocalDate, Integer>> maxSales = dataset.entrySet().stream().max(Map.Entry.comparingByValue());
-
-            // gets the date for the best year
-            Optional<Map.Entry<LocalDate, Integer>> minSales = dataset.entrySet().stream().min(Map.Entry.comparingByValue());
+            Optional<Map.Entry<YearMonth, Integer>> minSales = dataset.entrySet().stream().min(Map.Entry.comparingByValue());
 
             if(maxSales.isPresent() && minSales.isPresent()){
                 YearMonth maxSaleDate = YearMonth.of(maxSales.get().getKey().getYear(),maxSales.get().getKey().getMonth());

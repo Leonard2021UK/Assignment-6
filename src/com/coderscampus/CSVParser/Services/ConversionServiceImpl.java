@@ -15,11 +15,9 @@ public class ConversionServiceImpl implements ConversionService {
 
 
     // this holds the previous sales date
-//    private LocalDate previousYearMonth;
-    private YearMonth previousYearMonth;
+    private YearMonth previousYearMonth = YearMonth.of(1900,1);
 
     // stores data in a Deque which maintains LIFO
-//    private final Deque<String> salesData;
     private final Map<MonthDay,Integer> salesData;
 
 
@@ -31,7 +29,6 @@ public class ConversionServiceImpl implements ConversionService {
     private final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     public ConversionServiceImpl(){
-//        this.reverseData = new ArrayDeque<>();
         this.salesData = new HashMap<>();
 
     }
@@ -40,10 +37,10 @@ public class ConversionServiceImpl implements ConversionService {
 //    public void setReverseData(String data){
 //        this.reverseData.push(data);
 //    }
-    public void setSalesData(String data){
-
-        this.salesData.put(data);
-    }
+//    public void setSalesData(String data){
+//
+//        this.salesData.put(data);
+//    }
 
     //resets sales data when new file is starting
     public void resetSalesData(){
@@ -64,7 +61,7 @@ public class ConversionServiceImpl implements ConversionService {
     }
 
     public Map<YearMonth, Integer> getParsedData() {
-        return parsedData;
+        return this.parsedData;
     }
 
     /**
@@ -76,19 +73,10 @@ public class ConversionServiceImpl implements ConversionService {
     public Optional<YearMonth> stringToDate(String date) {
 
         try{
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-dd");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-yyyy");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-uu");
 
-//            LocalDate currentLocalDateTime = MonthDay.parse(date,formatter).atYear(this.previousYearMonth.getYear());
             YearMonth currentYearMonth = YearMonth.parse(date,formatter);
 
-            // whenever the current date is after the previous date it means it is a new year's sales data
-            if(currentYearMonth.isAfter(previousYearMonth)){
-                previousYearMonth = currentYearMonth;
-            }else{
-                currentYearMonth = currentYearMonth.plusYears(1);
-                startNewYear();
-            }
             return Optional.of(currentYearMonth);
 
         }catch (Exception e){
@@ -109,8 +97,6 @@ public class ConversionServiceImpl implements ConversionService {
         Optional<Integer> sale = isNumeric(sales) ? Optional.of(Integer.parseInt(sales)) : Optional.empty();
 
         try{
-
-
             // check whether the conversion was successfully carried out
             // if the date String and the numeric String was valid then store them
             if (yearMonth.isPresent() && sale.isPresent()){

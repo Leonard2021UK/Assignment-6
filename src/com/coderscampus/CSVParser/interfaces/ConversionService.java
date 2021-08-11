@@ -13,7 +13,7 @@ public interface ConversionService {
 
     void convertSalesData(String csvData);
 
-    void setSalesData(String data);
+//    void setSalesData(String data);
 
     void resetSalesData();
 
