@@ -10,12 +10,13 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 public class FileServiceImpl implements FileService {
 
     // holds data read from the file
-    private final Map<String, Map<YearMonth,Integer>> salesDataSet = new HashMap<>();
+    private final Map<String, Map<YearMonth,Integer>> salesDataSet = new TreeMap<>();
 
     // provides conversion functionalities
     private final ConversionService conversionService;
@@ -32,14 +33,14 @@ public class FileServiceImpl implements FileService {
 
         for (Map.Entry<String,File> entry: filePaths.entrySet()){
 
-            // clear sales data
-            this.conversionService.resetSalesData();
-
             readData(entry);
 
             // stores the whole dataset read from the file in a map data structure
             String reportName = entry.getKey();
             this.salesDataSet.put(reportName,this.conversionService.getParsedData());
+
+            // clear parsed data storage
+            this.conversionService.resetParsedData();
         }
     }
 

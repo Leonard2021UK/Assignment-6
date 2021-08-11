@@ -13,14 +13,6 @@ import java.util.regex.Pattern;
 
 public class ConversionServiceImpl implements ConversionService {
 
-
-    // this holds the previous sales date
-    private YearMonth previousYearMonth = YearMonth.of(1900,1);
-
-    // stores data in a Deque which maintains LIFO
-    private final Map<MonthDay,Integer> salesData;
-
-
     // stores the parsed data
     private Map<YearMonth,Integer> parsedData = new TreeMap<>();
 
@@ -28,36 +20,10 @@ public class ConversionServiceImpl implements ConversionService {
     // ref.:https://www.baeldung.com/java-check-string-number
     private final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
-    public ConversionServiceImpl(){
-        this.salesData = new HashMap<>();
-
-    }
-
-    // adds item in to a Deque datastructures thus maintaining LIFO
-//    public void setReverseData(String data){
-//        this.reverseData.push(data);
-//    }
-//    public void setSalesData(String data){
-//
-//        this.salesData.put(data);
-//    }
 
     //resets sales data when new file is starting
-    public void resetSalesData(){
-        this.salesData.clear();
-    }
-
-//    public void initializePreviousLocalDate (){
-//        this.previousYearMonth = initialDate;
-//    }
-
-    // sets the next year (backwards)
-//    private void startNewYear(){
-//        this.previousYearMonth = this.previousYearMonth.minusYears(1).withMonth(12).withDayOfMonth(31);
-//    }
-
-    private void startNewYear(){
-        this.previousYearMonth = this.previousYearMonth.plusYears(1).withMonth(12);
+    public void resetParsedData(){
+        this.parsedData = new TreeMap<>();
     }
 
     public Map<YearMonth, Integer> getParsedData() {
@@ -98,7 +64,7 @@ public class ConversionServiceImpl implements ConversionService {
 
         try{
             // check whether the conversion was successfully carried out
-            // if the date String and the numeric String was valid then store them
+            // if the date String and the numeric String has valid value then store them
             if (yearMonth.isPresent() && sale.isPresent()){
                 this.parsedData.put(yearMonth.get(), sale.get());
             }
