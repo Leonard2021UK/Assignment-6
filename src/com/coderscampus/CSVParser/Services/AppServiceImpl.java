@@ -23,7 +23,7 @@ public class AppServiceImpl {
         files.put("Model S",new File("data/modelS.csv"));
         files.put("Model X",new File("data/modelX.csv"));
 
-        this.fileService.readFile(files);
+        this.fileService.readFiles(files);
     }
 
     public void showReport(){

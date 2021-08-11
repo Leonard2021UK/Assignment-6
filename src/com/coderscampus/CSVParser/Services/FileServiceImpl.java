@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 public class FileServiceImpl implements FileService {
 
     // holds data read from the file
-    private final Map<String, Map<LocalDate,Integer>> salesDataSet = new HashMap<>();
+    private final Map<String, Map<YearMonth,Integer>> salesDataSet = new HashMap<>();
 
     // provides conversion functionalities
     private final ConversionService conversionService;
@@ -27,23 +28,23 @@ public class FileServiceImpl implements FileService {
      * Iterates through all the files provided for parsing
      */
     @Override
-    public void readFile(Map<String,File> filePaths){
+    public void readFiles(Map<String,File> filePaths){
 
         for (Map.Entry<String,File> entry: filePaths.entrySet()){
 
-            // clear Deque
-            this.conversionService.resetReverseData();
+            // clear sales data
+            this.conversionService.resetSalesData();
 
-            readAndStoreDataInReverse(entry);
+            readData(entry);
 
             // stores the whole dataset read from the file in a map data structure
             String reportName = entry.getKey();
-            this.salesDataSet.put(reportName,this.conversionService.convertData());
+            this.salesDataSet.put(reportName,this.conversionService.getParsedData());
         }
     }
 
     @Override
-    public Map<String, Map<LocalDate, Integer>> getSalesDataSet() {
+    public Map<String, Map<YearMonth, Integer>> getSalesDataSet() {
         return salesDataSet;
     }
 
@@ -52,18 +53,18 @@ public class FileServiceImpl implements FileService {
      * @param file - file to read
      */
     @Override
-    public void readAndStoreDataInReverse(Map.Entry<String, File> file){
+    public void readData(Map.Entry<String, File> file){
 
         // It uses try-with-resources where the resource "BufferedReader" is automatically closed once finished (normally or abruptly),
         // hence no need for finally block.
         try (BufferedReader br = new BufferedReader(new FileReader(file.getValue()))) {
 
-            // holds data read from the file
+            // holds data, read from the file
             String csvData;
 
             // iterate through the file
             while ((csvData = br.readLine()) != null){
-                this.conversionService.setReverseData(csvData);
+                this.conversionService.convertSalesData(csvData);
             }
 
         } catch (Exception e) {

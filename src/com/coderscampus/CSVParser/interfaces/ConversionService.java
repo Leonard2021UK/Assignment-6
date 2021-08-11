@@ -1,19 +1,22 @@
 package com.coderscampus.CSVParser.interfaces;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Map;
 import java.util.Optional;
 
 public interface ConversionService {
 
-    Optional<LocalDate> stringToDate(String date);
+    Optional<YearMonth> stringToDate(String date);
 
-    void initializePreviousLocalDate ();
+//    void initializePreviousLocalDate ();
 
-    Map<LocalDate,Integer> convertData();
+    void convertSalesData(String csvData);
 
-    void setReverseData(String data);
+    void setSalesData(String data);
 
-    void resetReverseData();
+    void resetSalesData();
+
+    Map<YearMonth,Integer> getParsedData();
 
 }

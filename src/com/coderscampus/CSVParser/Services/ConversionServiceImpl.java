@@ -5,6 +5,7 @@ import com.coderscampus.CSVParser.interfaces.ConversionService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 import java.util.*;
@@ -12,42 +13,58 @@ import java.util.regex.Pattern;
 
 public class ConversionServiceImpl implements ConversionService {
 
-    // the data is processed backwards from 2019
-    // this is the starting point in all three reports
-    private final LocalDate initialDate;
 
     // this holds the previous sales date
-    private LocalDate previousLocalDate;
+//    private LocalDate previousYearMonth;
+    private YearMonth previousYearMonth;
 
     // stores data in a Deque which maintains LIFO
-    private final Deque<String> reverseData;
+//    private final Deque<String> salesData;
+    private final Map<MonthDay,Integer> salesData;
+
+
+    // stores the parsed data
+    private Map<YearMonth,Integer> parsedData = new TreeMap<>();
 
     // regex to match numeric Strings consisting of the positive or negative integer and floats.
     // ref.:https://www.baeldung.com/java-check-string-number
     private final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
-    public ConversionServiceImpl(Integer latestYearInReport){
-        this.initialDate = LocalDate.of(latestYearInReport,12,31);
-        this.reverseData = new ArrayDeque<>();
+    public ConversionServiceImpl(){
+//        this.reverseData = new ArrayDeque<>();
+        this.salesData = new HashMap<>();
+
     }
 
     // adds item in to a Deque datastructures thus maintaining LIFO
-    public void setReverseData(String data){
-        this.reverseData.push(data);
+//    public void setReverseData(String data){
+//        this.reverseData.push(data);
+//    }
+    public void setSalesData(String data){
+
+        this.salesData.put(data);
     }
 
-    //resets the Deque when new file is starting to be read
-    public void resetReverseData(){
-        this.reverseData.clear();
+    //resets sales data when new file is starting
+    public void resetSalesData(){
+        this.salesData.clear();
     }
 
-    public void initializePreviousLocalDate (){
-        this.previousLocalDate = initialDate;
-    }
+//    public void initializePreviousLocalDate (){
+//        this.previousYearMonth = initialDate;
+//    }
 
     // sets the next year (backwards)
+//    private void startNewYear(){
+//        this.previousYearMonth = this.previousYearMonth.minusYears(1).withMonth(12).withDayOfMonth(31);
+//    }
+
     private void startNewYear(){
-        this.previousLocalDate = this.previousLocalDate.minusYears(1).withMonth(12).withDayOfMonth(31);
+        this.previousYearMonth = this.previousYearMonth.plusYears(1).withMonth(12);
+    }
+
+    public Map<YearMonth, Integer> getParsedData() {
+        return parsedData;
     }
 
     /**
@@ -56,20 +73,23 @@ public class ConversionServiceImpl implements ConversionService {
      * @return an optional localDate
      */
     @Override
-    public Optional<LocalDate> stringToDate(String date) {
+    public Optional<YearMonth> stringToDate(String date) {
 
         try{
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-dd");
-            LocalDate currentLocalDateTime = MonthDay.parse(date,formatter).atYear(this.previousLocalDate.getYear());
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-dd");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-yyyy");
+
+//            LocalDate currentLocalDateTime = MonthDay.parse(date,formatter).atYear(this.previousYearMonth.getYear());
+            YearMonth currentYearMonth = YearMonth.parse(date,formatter);
 
             // whenever the current date is after the previous date it means it is a new year's sales data
-            if(currentLocalDateTime.isBefore(previousLocalDate)){
-                previousLocalDate = currentLocalDateTime;
+            if(currentYearMonth.isAfter(previousYearMonth)){
+                previousYearMonth = currentYearMonth;
             }else{
-                currentLocalDateTime = currentLocalDateTime.minusYears(1);
+                currentYearMonth = currentYearMonth.plusYears(1);
                 startNewYear();
             }
-            return Optional.of(currentLocalDateTime);
+            return Optional.of(currentYearMonth);
 
         }catch (Exception e){
             return Optional.empty();
@@ -79,37 +99,28 @@ public class ConversionServiceImpl implements ConversionService {
     /**
      * Reads the CSV file and stores the data
      */
-    public Map<LocalDate,Integer> convertData(){
+    public void convertSalesData(String csvData){
+
+        String[] splitSalesData = csvData.split(",");
+        String date = splitSalesData[0];
+        String sales = splitSalesData[1];
+
+        Optional<YearMonth> yearMonth = stringToDate(date);
+        Optional<Integer> sale = isNumeric(sales) ? Optional.of(Integer.parseInt(sales)) : Optional.empty();
 
         try{
-            // stores the parsed file data converted time
-            Map<LocalDate,Integer> parsedData = new TreeMap<>();
 
-            initializePreviousLocalDate();
 
-            this.reverseData.forEach(csvLine -> {
+            // check whether the conversion was successfully carried out
+            // if the date String and the numeric String was valid then store them
+            if (yearMonth.isPresent() && sale.isPresent()){
+                this.parsedData.put(yearMonth.get(), sale.get());
+            }
 
-                // split the line of string read from the csv file
-                String[] salesData = csvLine.split(",");
-                String date = salesData[0];
-                Optional<Integer> sale = isNumeric(salesData[1]) ? Optional.of(Integer.parseInt(salesData[1])) : Optional.empty();
-
-                // convert date string to optional local date
-                Optional<LocalDate> saleDate = stringToDate(date);
-
-                // check whether the conversion was successfully carried out
-                // if the date String and the numeric String was valid then store them
-                if (saleDate.isPresent() && sale.isPresent()){
-                    parsedData.put(saleDate.get(), sale.get());
-                }
-            });
-
-            return parsedData;
 
         } catch (Exception e) {
             System.out.println("Something went wrong!");
             System.out.println(e.getMessage());
-            return null;
         }
     }
 
