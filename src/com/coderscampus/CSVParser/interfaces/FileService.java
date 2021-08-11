@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Map;
+import java.util.HashMap;
 
 public interface FileService {
 

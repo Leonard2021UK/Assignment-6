@@ -1,10 +1,6 @@
 package com.coderscampus.CSVParser.Services;
 
 import com.coderscampus.CSVParser.interfaces.ConversionService;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.MonthDay;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
@@ -14,16 +10,16 @@ import java.util.regex.Pattern;
 public class ConversionServiceImpl implements ConversionService {
 
     // stores the parsed data
-    private Map<YearMonth,Integer> parsedData = new TreeMap<>();
+    private Map<YearMonth,Integer> parsedData = new HashMap<>();
 
     // regex to match numeric Strings consisting of the positive or negative integer and floats.
     // ref.:https://www.baeldung.com/java-check-string-number
     private final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
 
-    //resets sales data when new file is starting
+    //creates new map to store sales data when new file is starting
     public void resetParsedData(){
-        this.parsedData = new TreeMap<>();
+        this.parsedData = new HashMap<>();
     }
 
     public Map<YearMonth, Integer> getParsedData() {
@@ -53,7 +49,7 @@ public class ConversionServiceImpl implements ConversionService {
     /**
      * Reads the CSV file and stores the data
      */
-    public void convertSalesData(String csvData){
+    public void parseSalesData(String csvData){
 
         String[] splitSalesData = csvData.split(",");
         String date = splitSalesData[0];

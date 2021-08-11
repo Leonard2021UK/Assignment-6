@@ -6,17 +6,16 @@ import com.coderscampus.CSVParser.interfaces.FileService;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 
 public class FileServiceImpl implements FileService {
 
     // holds data read from the file
-    private final Map<String, Map<YearMonth,Integer>> salesDataSet = new TreeMap<>();
+    private final Map<String, Map<YearMonth,Integer>> salesDataSet = new HashMap<>();
 
     // provides conversion functionalities
     private final ConversionService conversionService;
@@ -50,7 +49,7 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     * Reads and stores the data into Deque to maintain LIFO
+     * Reads and parses data coming from the file
      * @param file - file to read
      */
     @Override
@@ -60,12 +59,12 @@ public class FileServiceImpl implements FileService {
         // hence no need for finally block.
         try (BufferedReader br = new BufferedReader(new FileReader(file.getValue()))) {
 
-            // holds data, read from the file
+            // holds line of data, read from the file
             String csvData;
 
             // iterate through the file
             while ((csvData = br.readLine()) != null){
-                this.conversionService.convertSalesData(csvData);
+                this.conversionService.parseSalesData(csvData);
             }
 
         } catch (Exception e) {

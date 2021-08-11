@@ -3,9 +3,14 @@ package com.coderscampus.CSVParser.Services;
 import com.coderscampus.CSVParser.interfaces.FileService;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.IntSummaryStatistics;
 import java.util.stream.Collectors;
 
 public class AppServiceImpl {
@@ -27,6 +32,7 @@ public class AppServiceImpl {
     }
 
     public void showReport(){
+
         this.fileService.getSalesDataSet().forEach((reportName,dataset)->{
 
             System.out.println(reportName + " Yearly Sales Report");
@@ -36,7 +42,7 @@ public class AppServiceImpl {
             Map<Integer, List<Map.Entry<YearMonth, Integer>>> groupedDataSet = dataset
                     .entrySet()
                     .stream()
-                    .collect(Collectors.groupingBy(data -> data.getKey().getYear()));
+                    .collect(Collectors.groupingBy(data -> data.getKey().getYear(), LinkedHashMap::new,Collectors.toList()));
 
             // sums sales for all years
             groupedDataSet.forEach((year,salesData) -> {

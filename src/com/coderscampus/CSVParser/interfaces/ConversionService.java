@@ -3,12 +3,13 @@ package com.coderscampus.CSVParser.interfaces;
 import java.time.YearMonth;
 import java.util.Map;
 import java.util.Optional;
+import java.util.HashMap;
 
 public interface ConversionService {
 
     Optional<YearMonth> stringToDate(String date);
 
-    void convertSalesData(String csvData);
+    void parseSalesData(String csvData);
 
     void resetParsedData();
 
