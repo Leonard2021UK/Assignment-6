@@ -10,11 +10,11 @@ public class CSVParserApp {
 
     public static void main(String[] args) {
 
-        ConversionService dtcs = new ConversionServiceImpl();
+        ConversionService dataConversionService = new ConversionServiceImpl();
 
-        FileService fs = new FileServiceImpl(dtcs);
+        FileService fileService = new FileServiceImpl(dataConversionService);
 
-        AppServiceImpl app = new AppServiceImpl(fs);
+        AppServiceImpl app = new AppServiceImpl(fileService);
 
         app.prepareReport();
 
